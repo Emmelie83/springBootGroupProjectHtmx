@@ -35,9 +35,21 @@ public class WebController {
         this.translationService = translationService;
     }
 
+    @GetMapping("home")
+    public String getPublicMessages(@RequestParam(value = "page", defaultValue = "0") int page,
+                                    Model model, HttpServletRequest httpServletRequest) {
+        var messages = messageService.findAllByPrivateMessageIsFalse();
+        model.addAttribute("messages", messages);
+        model.addAttribute("page", page);
+        model.addAttribute("httpServletRequest", httpServletRequest);
+        return "home";
+    }
+
     @GetMapping("messages")
-    public String getMessages(Model model, Principal principal, HttpServletRequest httpServletRequest, @AuthenticationPrincipal OAuth2User oauth2User,
-                              @RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) {
+    public String getMessages(@RequestParam(value = "page", defaultValue = "0") int page,
+                              Model model, Principal principal, HttpServletRequest httpServletRequest,
+                              @AuthenticationPrincipal OAuth2User oauth2User,
+                              @RequestParam(defaultValue = "3") int size) {
 
         if (page < 0) page = 0;
         Pageable pageable = PageRequest.of(page, size);
@@ -64,16 +76,21 @@ public class WebController {
     }
 
     @GetMapping("translation/{messageId}")
-    public String translateMessage(@PathVariable Long messageId, Model model, HttpServletRequest httpServletRequest) {
+    public String translateMessage(@PathVariable Long messageId,
+                                   @RequestParam Model model, HttpServletRequest httpServletRequest) {
+
         var messageOptional = messageService.findById(messageId);
         Message message = messageOptional.get();
+
         String translatedTitle = translationService.translateText(message.getMessageTitle());
         String translatedMessage = translationService.translateText(message.getMessageBody());
         String language = translationService.detectMessageLanguage(message.getMessageBody());
+
         model.addAttribute("postedLanguage", language);
         model.addAttribute("messageTitle", translatedTitle);
         model.addAttribute("messageBody", translatedMessage);
         model.addAttribute("httpServletRequest", httpServletRequest);
+
         return "translation";
     }
 
@@ -102,7 +119,6 @@ public class WebController {
 
         return "redirect:/web/messages";
     }
-
 
 
     @GetMapping("update/{messageId}")
