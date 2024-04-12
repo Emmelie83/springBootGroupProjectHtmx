@@ -1,4 +1,4 @@
-package se.iths.springbootgroupproject;
+package se.iths.springbootgroupproject.dtos;
 
 
 import jakarta.validation.constraints.NotNull;

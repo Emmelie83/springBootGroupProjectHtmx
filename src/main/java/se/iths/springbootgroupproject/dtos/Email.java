@@ -1,4 +1,4 @@
-package se.iths.springbootgroupproject.config;
+package se.iths.springbootgroupproject.dtos;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
