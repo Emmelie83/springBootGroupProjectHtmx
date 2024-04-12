@@ -4,15 +4,11 @@ import jakarta.persistence.EntityNotFoundException;
 
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.access.prepost.PreFilter;
 
 import org.springframework.stereotype.Service;
 import se.iths.springbootgroupproject.entities.Message;
-import se.iths.springbootgroupproject.entities.PublicMessage;
+import se.iths.springbootgroupproject.dtos.PublicMessage;
 import se.iths.springbootgroupproject.repos.MessageRepository;
 
 import java.time.LocalDate;

@@ -1,4 +1,6 @@
-package se.iths.springbootgroupproject.entities;
+package se.iths.springbootgroupproject.dtos;
+
+import se.iths.springbootgroupproject.entities.User;
 
 import java.time.LocalDate;
 

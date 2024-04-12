@@ -3,10 +3,9 @@ package se.iths.springbootgroupproject.repos;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.ListCrudRepository;
-import org.springframework.data.repository.ListPagingAndSortingRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import se.iths.springbootgroupproject.entities.Message;
-import se.iths.springbootgroupproject.entities.PublicMessage;
+import se.iths.springbootgroupproject.dtos.PublicMessage;
 
 import java.util.List;
 
