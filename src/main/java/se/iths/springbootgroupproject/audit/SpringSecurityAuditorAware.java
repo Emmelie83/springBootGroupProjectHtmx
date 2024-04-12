@@ -1,4 +1,4 @@
-package se.iths.springbootgroupproject.config;
+package se.iths.springbootgroupproject.audit;
 
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;

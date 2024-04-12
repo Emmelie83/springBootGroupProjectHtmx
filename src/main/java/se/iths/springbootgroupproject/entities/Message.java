@@ -30,10 +30,12 @@ public class Message {
 
     @Setter
     @LastModifiedDate
+    @jakarta.persistence.Column(insertable = false)
     private LocalDate lastModifiedDate;
 
     @Setter
     @LastModifiedBy
+    @jakarta.persistence.Column(insertable = false)
     private String lastModifiedBy;
 
     @Setter

@@ -37,7 +37,8 @@ public class WebController {
 
     @GetMapping("home")
     public String getPublicMessages(@RequestParam(value = "page", defaultValue = "0") int page,
-                                    Model model, HttpServletRequest httpServletRequest) {
+                                    Model model,
+                                    HttpServletRequest httpServletRequest) {
         var messages = messageService.findAllByPrivateMessageIsFalse();
         model.addAttribute("messages", messages);
         model.addAttribute("page", page);
@@ -76,16 +77,12 @@ public class WebController {
     }
 
     @GetMapping("translation/{messageId}")
-    public String translateMessage(@PathVariable Long messageId,
-                                   @RequestParam Model model, HttpServletRequest httpServletRequest) {
-
+    public String translateMessage(@PathVariable Long messageId, Model model, HttpServletRequest httpServletRequest) {
         var messageOptional = messageService.findById(messageId);
         Message message = messageOptional.get();
-
         String translatedTitle = translationService.translateText(message.getMessageTitle());
         String translatedMessage = translationService.translateText(message.getMessageBody());
         String language = translationService.detectMessageLanguage(message.getMessageBody());
-
         model.addAttribute("postedLanguage", language);
         model.addAttribute("messageTitle", translatedTitle);
         model.addAttribute("messageBody", translatedMessage);
@@ -97,9 +94,7 @@ public class WebController {
 
     @GetMapping("create")
     public String postMessage(Model model) {
-
         CreateMessageFormData formData = new CreateMessageFormData();
-
         model.addAttribute("formData", formData);
 
         return "create";
