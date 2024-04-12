@@ -1,4 +1,6 @@
 package se.iths.springbootgroupproject.controllers;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,10 +35,24 @@ public class WebController {
         this.translationService = translationService;
     }
 
-    @GetMapping("messages")
-    public String getMessages(Model model, Principal principal, @AuthenticationPrincipal OAuth2User oauth2User,
-                              @RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "3") int size) {
+    @GetMapping("home")
+    public String getPublicMessages(@RequestParam(value = "page", defaultValue = "0") int page,
+                                    Model model,
+                                    HttpServletRequest httpServletRequest) {
+        var messages = messageService.findAllByPrivateMessageIsFalse();
+        model.addAttribute("messages", messages);
+        model.addAttribute("page", page);
+        model.addAttribute("httpServletRequest", httpServletRequest);
+        return "home";
+    }
 
+    @GetMapping("messages")
+    public String getMessages(@RequestParam(value = "page", defaultValue = "0") int page,
+                              Model model, Principal principal, HttpServletRequest httpServletRequest,
+                              @AuthenticationPrincipal OAuth2User oauth2User,
+                              @RequestParam(defaultValue = "3") int size) {
+
+        if (page < 0) page = 0;
         Pageable pageable = PageRequest.of(page, size);
         Page<Message> paginatedMessages = messageService.findPaginatedMessages(pageable);
         var publicMessages = messageService.findAllByPrivateMessageIsFalse();
@@ -53,13 +69,15 @@ public class WebController {
         model.addAttribute("messages", paginatedMessages);
         model.addAttribute("publicMessages", publicMessages);
         model.addAttribute("isLoggedIn", isLoggedIn);
+        model.addAttribute("httpServletRequest", httpServletRequest);
+        model.addAttribute("page", page);
         loggedInUser.ifPresent(user -> model.addAttribute("loggedInUser", user));
 
         return "messages";
     }
 
     @GetMapping("translation/{messageId}")
-    public String translateMessage(@PathVariable Long messageId, Model model) {
+    public String translateMessage(@PathVariable Long messageId, Model model, HttpServletRequest httpServletRequest) {
         var messageOptional = messageService.findById(messageId);
         Message message = messageOptional.get();
         String translatedTitle = translationService.translateText(message.getMessageTitle());
@@ -68,15 +86,15 @@ public class WebController {
         model.addAttribute("postedLanguage", language);
         model.addAttribute("messageTitle", translatedTitle);
         model.addAttribute("messageBody", translatedMessage);
+        model.addAttribute("httpServletRequest", httpServletRequest);
+
         return "translation";
     }
 
 
     @GetMapping("create")
     public String postMessage(Model model) {
-
         CreateMessageFormData formData = new CreateMessageFormData();
-
         model.addAttribute("formData", formData);
 
         return "create";
@@ -98,9 +116,8 @@ public class WebController {
     }
 
 
-
     @GetMapping("update/{messageId}")
-    public String updateMessage(@PathVariable Long messageId, Model model, @AuthenticationPrincipal OAuth2User oauth2User) {
+    public String updateMessage(@PathVariable Long messageId, Model model, HttpServletRequest httpServletRequest, @AuthenticationPrincipal OAuth2User oauth2User) {
         Message message = messageService.findById(messageId).get();
 
         String redirectUrl = redirectIfNotOwnerOrAdmin(oauth2User, message);
@@ -108,8 +125,9 @@ public class WebController {
 
         CreateMessageFormData formData = new CreateMessageFormData(message.getMessageTitle(), message.getMessageBody(), message.isPublic());
         model.addAttribute("formData", formData);
-        model.addAttribute("originalMessage", message); // Add the original message to the model
+        model.addAttribute("originalMessage", message);
         model.addAttribute("messageId", messageId);
+        model.addAttribute("httpServletRequest", httpServletRequest);
         return "update";
     }
 
@@ -162,10 +180,11 @@ public class WebController {
 
 
     @GetMapping("userMessages")
-    public String getUserMessages(@RequestParam Long userId, Model model) {
+    public String getUserMessages(@RequestParam Long userId, Model model, HttpServletRequest httpServletRequest) {
         var userMessages = messageService.fidAllByUserId(userId);
 
         model.addAttribute("userMessages", userMessages);
+        model.addAttribute("httpServletRequest", httpServletRequest);
 
         return "userMessages";
     }
