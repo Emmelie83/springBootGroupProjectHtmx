@@ -3,7 +3,7 @@ package se.iths.springbootgroupproject.controllers;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import se.iths.springbootgroupproject.entities.PublicMessage;
+import se.iths.springbootgroupproject.dtos.PublicMessage;
 import se.iths.springbootgroupproject.services.MessageService;
 
 import java.util.List;

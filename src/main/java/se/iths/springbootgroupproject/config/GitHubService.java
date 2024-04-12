@@ -5,6 +5,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import se.iths.springbootgroupproject.dtos.Email;
 
 import java.util.List;
 

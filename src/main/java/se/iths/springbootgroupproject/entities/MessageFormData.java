@@ -1,4 +1,4 @@
-package se.iths.springbootgroupproject;
+package se.iths.springbootgroupproject.entities;
 
 
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +14,7 @@ import se.iths.springbootgroupproject.entities.User;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateMessageFormData {
+public class MessageFormData {
 
     @NotNull
     @Size(min = 1, max = 100)
