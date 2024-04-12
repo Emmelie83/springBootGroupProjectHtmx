@@ -1,4 +1,4 @@
-package se.iths.springbootgroupproject.config;
+package se.iths.springbootgroupproject.services;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.retry.annotation.Retryable;

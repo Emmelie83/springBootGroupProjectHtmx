@@ -1,4 +1,4 @@
-package se.iths.springbootgroupproject.config;
+package se.iths.springbootgroupproject.services;
 
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import se.iths.springbootgroupproject.dtos.Email;
 import se.iths.springbootgroupproject.repos.UserRepository;
 import se.iths.springbootgroupproject.entities.User;
+import se.iths.springbootgroupproject.services.GitHubService;
 
 import java.util.List;
 import java.util.Map;

@@ -1,17 +1,15 @@
 package se.iths.springbootgroupproject.controllers;
-
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import se.iths.springbootgroupproject.entities.MessageFormData;
+import se.iths.springbootgroupproject.dtos.CreateMessageFormData;
 import se.iths.springbootgroupproject.entities.Message;
 import se.iths.springbootgroupproject.entities.User;
 import se.iths.springbootgroupproject.services.MessageService;
@@ -77,7 +75,7 @@ public class WebController {
     @GetMapping("create")
     public String postMessage(Model model) {
 
-        MessageFormData formData = new MessageFormData();
+        CreateMessageFormData formData = new CreateMessageFormData();
 
         model.addAttribute("formData", formData);
 
@@ -85,7 +83,7 @@ public class WebController {
     }
 
     @PostMapping("create")
-    public String greetingSubmit(@Valid @ModelAttribute("formData") MessageFormData message,
+    public String greetingSubmit(@Valid @ModelAttribute("formData") CreateMessageFormData message,
                                  BindingResult bindingResult,
                                  Model model, @AuthenticationPrincipal OAuth2User oauth2User) {
         if (bindingResult.hasErrors()) {
@@ -108,7 +106,7 @@ public class WebController {
         String redirectUrl = redirectIfNotOwnerOrAdmin(oauth2User, message);
         if (redirectUrl != null) return redirectUrl;
 
-        MessageFormData formData = new MessageFormData(message.getMessageTitle(), message.getMessageBody(), message.isPublic());
+        CreateMessageFormData formData = new CreateMessageFormData(message.getMessageTitle(), message.getMessageBody(), message.isPublic());
         model.addAttribute("formData", formData);
         model.addAttribute("originalMessage", message); // Add the original message to the model
         model.addAttribute("messageId", messageId);
@@ -130,7 +128,7 @@ public class WebController {
     }
 
     @PostMapping("update/{messageId}")
-    public String greetingSubmit(@PathVariable Long messageId, @Valid @ModelAttribute("formData") MessageFormData message,
+    public String greetingSubmit(@PathVariable Long messageId, @Valid @ModelAttribute("formData") CreateMessageFormData message,
                                  BindingResult bindingResult, @AuthenticationPrincipal OAuth2User oauth2User,
                                  Model model) {
         if (bindingResult.hasErrors()) {
