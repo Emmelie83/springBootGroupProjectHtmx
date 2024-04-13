@@ -15,7 +15,7 @@
 
 <h1 th:text="#{greeting}" id="home">Welcome</h1>
 <div class="post">
-    <a href="/web/create" th:text="#{postmessage}"></a>
+    <a href="/web/create"><button id="post_button" th:text="#{postmessage}"></button></a>
 </div>
 <div class="content">
     <h2 th:text="#{messagelist}"></h2>
@@ -36,8 +36,6 @@
             <td th:text="${message.messageTitle}">Title</td>
             <td class="message_body">
                 <span th:text="${message.messageBody}"> </span>
-
-
             </td>
             <td>
                 <a th:href="@{/web/userMessages(userId=${message.user?.id})}">
@@ -46,7 +44,8 @@
             </td>
             <td th:text="${message.createdDate}">2020-01-01</td>
             <td>
-                <span th:if="${message.lastModifiedBy != null}" th:text="${message.lastModifiedDate} + ' ' + #{editedby} + ': ' + ${message.lastModifiedBy}"></span>
+                <span th:if="${message.lastModifiedBy != null}"
+                      th:text="${message.lastModifiedDate} + ' ' + #{editedby} + ': ' + ${message.lastModifiedBy}"></span>
                 <p id="edit" th:if="${message.user?.id} == ${loggedInUser?.id}">
                     <a th:href="@{/web/update/{messageId}(messageId=${message.id})}" th:text="#{editmessage}"></a>
                 </p>
@@ -64,55 +63,14 @@
     </table>
     <p th:unless="${not messages.isEmpty()}">No messages found.</p>
     <p id="pagination_buttons">
-    <p>
-        <span th:text="#{page} + ': '"></span>
+        <span th:text="#{page} + ': ' + ${page}"></span>
         <span id="page_number"></span>
     </p>
-    <button id="prev_button">Previous</button>
-    <button id="next_button">Next</button>
+    <p>
+        <a th:if="${page > 1}" th:href="@{${httpServletRequest.requestURI} + '?page=' + ${page - 1}}"><button id="previous_button">Previous</button></a>
+        <a th:if="${messageCount >= 3}" th:href="@{${httpServletRequest.requestURI} + '?page=' + ${page + 1}}"><button id="next_button">Next</button></a>
     </p>
+
 </div>
-<script>
-
-    let currentPage = 0;
-
-
-    function updatePageNumber() {
-        document.getElementById('page_number').textContent = (currentPage + 1);
-    }
-
-
-    function nextPage() {
-        currentPage++;
-        updatePageNumber();
-
-        window.location.href = "?page=" + currentPage;
-    }
-
-
-    function previousPage() {
-        if (currentPage > 0) {
-            currentPage--;
-            updatePageNumber();
-
-            window.location.href = "?page=" + currentPage;
-        }
-    }
-
-
-    document.getElementById('next_button').addEventListener('click', nextPage);
-
-
-    document.getElementById('prev_button').addEventListener('click', previousPage);
-
-
-    const urlParams = new URLSearchParams(window.location.search);
-    let pageParam = urlParams.get('page');
-    if (pageParam !== null && !isNaN(pageParam) && pageParam > 0) {
-        currentPage = parseInt(pageParam);
-    }
-    updatePageNumber();
-
-</script>
 </body>
 </html>

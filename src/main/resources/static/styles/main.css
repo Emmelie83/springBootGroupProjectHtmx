@@ -48,6 +48,10 @@ th {
     margin-top: 3em;
 }
 
+#post_button {
+    margin: 0;
+}
+
 .menu_link {
     margin-left: 0.5em;
 }
@@ -74,7 +78,7 @@ input[type=button], input[type=submit], input[type=reset], button {
     border: none;
     color: white;
     padding: 12px 18px;
-    margin: 4px
+    margin-right: 0.7em;
 }
 
 input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover, button:hover {
@@ -82,6 +86,7 @@ input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover, but
     color: black;
     border: 1px solid #ccc;
     radius: 4px;
+    margin-right: 0.7em;
 }
 
 input[type=text], #messageBody {

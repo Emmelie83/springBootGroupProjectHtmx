@@ -11,7 +11,7 @@
         }
 
         .content {
-            width: 90%;
+            width: 95%;
             margin: auto;
             padding-top: 2em;
         }
@@ -60,8 +60,8 @@
 </head>
 <body>
 <div class="menu">
-    <a class="menu_link" th:href="@{'/home?lang=en'}">English</a>
-    <a class="menu_link" th:href="@{'/home?lang=sv'}">Svenska</a>
+    <a class="menu_link" th:href="@{${httpServletRequest.requestURI} + '?lang=en'}">English</a>
+    <a class="menu_link" th:href="@{${httpServletRequest.requestURI} + '?lang=sv'}">Svenska</a>
     <a class="menu_link" id="login_link" th:href="'/login'" th:text="#{login}"></a>
 </div>
 <h1 th:text="#{greeting}" id="home">Welcome</h1>
