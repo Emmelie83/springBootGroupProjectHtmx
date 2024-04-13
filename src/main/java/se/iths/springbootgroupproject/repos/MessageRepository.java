@@ -2,6 +2,7 @@ package se.iths.springbootgroupproject.repos;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import se.iths.springbootgroupproject.entities.Message;
@@ -11,7 +12,8 @@ import java.util.List;
 
 
 public interface MessageRepository extends PagingAndSortingRepository<Message, Long>,ListCrudRepository<Message, Long> {
-    Page<Message> findAllBy(Pageable pageable);
+
+    List<Message> findAllBy(Pageable pageable);
 
     List<PublicMessage> findAllByIsPublicIsTrue();
 

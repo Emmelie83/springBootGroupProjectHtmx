@@ -6,6 +6,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import se.iths.springbootgroupproject.entities.Message;
 import se.iths.springbootgroupproject.dtos.PublicMessage;
@@ -61,9 +62,6 @@ public class MessageService {
         return message;
     }
 
-    public Page<Message> findAllBy(Pageable pageable) {
-        return messageRepository.findAllBy(pageable);
-    }
 
     public List<PublicMessage> findAllByPrivateMessageIsFalse() {
         return messageRepository.findAllByIsPublicIsTrue();
@@ -77,7 +75,7 @@ public class MessageService {
         return messageRepository.findAllByUserId(userId);
     }
 
-    public Page<Message> findPaginatedMessages(Pageable pageable) {
+    public List<Message> findPaginatedMessages(Pageable pageable) {
 
         return messageRepository.findAllBy(pageable);
     }

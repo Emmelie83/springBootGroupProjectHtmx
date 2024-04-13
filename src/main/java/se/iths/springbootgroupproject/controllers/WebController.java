@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import se.iths.springbootgroupproject.services.TranslationService;
 import se.iths.springbootgroupproject.services.UserService;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -35,27 +37,17 @@ public class WebController {
         this.translationService = translationService;
     }
 
-    @GetMapping("home")
-    public String getPublicMessages(@RequestParam(value = "page", defaultValue = "0") int page,
-                                    Model model,
-                                    HttpServletRequest httpServletRequest) {
-        var messages = messageService.findAllByPrivateMessageIsFalse();
-        model.addAttribute("messages", messages);
-        model.addAttribute("page", page);
-        model.addAttribute("httpServletRequest", httpServletRequest);
-        return "home";
-    }
 
     @GetMapping("messages")
-    public String getMessages(@RequestParam(value = "page", defaultValue = "0") int page,
+    public String getMessages(@RequestParam(value = "page", defaultValue = "1") int page,
                               Model model, Principal principal, HttpServletRequest httpServletRequest,
                               @AuthenticationPrincipal OAuth2User oauth2User,
                               @RequestParam(defaultValue = "3") int size) {
 
-        if (page < 0) page = 0;
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Message> paginatedMessages = messageService.findPaginatedMessages(pageable);
-        var publicMessages = messageService.findAllByPrivateMessageIsFalse();
+        if (page < 1) page = 1;
+        Pageable pageable = PageRequest.of(page - 1, size);
+        List<Message> paginatedMessages = messageService.findPaginatedMessages(pageable);
+        int messageCount = paginatedMessages.size();
         boolean isLoggedIn = principal != null;
 
         Integer githubId;
@@ -67,10 +59,10 @@ public class WebController {
         }
 
         model.addAttribute("messages", paginatedMessages);
-        model.addAttribute("publicMessages", publicMessages);
         model.addAttribute("isLoggedIn", isLoggedIn);
         model.addAttribute("httpServletRequest", httpServletRequest);
         model.addAttribute("page", page);
+        model.addAttribute("messageCount", messageCount);
         loggedInUser.ifPresent(user -> model.addAttribute("loggedInUser", user));
 
         return "messages";
