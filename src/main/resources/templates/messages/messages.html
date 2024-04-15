@@ -16,7 +16,9 @@
 
 <h1 th:text="#{greeting}" id="home">Welcome</h1>
 <div class="post">
-    <a href="/web/create"><button id="post_button" th:text="#{postmessage}"></button></a>
+    <a href="/web/create">
+        <button id="post_button" th:text="#{postmessage}"></button>
+    </a>
 </div>
 <div class="content">
     <h2 th:text="#{messagelist}"></h2>
@@ -34,13 +36,14 @@
         <tbody hx-target="closest tr" hx-swap="outerHTML">
         <tr th:each="message : ${messages}">
             <td th:text="${message.messageTitle}">Title</td>
-            <td class="message_body">
-                <span th:text="${message.messageBody}"> </span>
-            </td>
+            <td th:text="${message.messageBody}" class="message_body">Lorum ipsum</td>
             <td>
-                <a th:href="@{/web/userMessages(userId=${message.user?.id})}">
-                    <span th:text="${message.user.userName}">Jane Doe</span>
-                </a>
+                <button class="block" th:attr="hx-get=@{/messages/usermessages(userId=${message.user?.id})}"
+                   hx-target="tbody"
+                   hx-swap="outerHTML" th:text="${message.user.userName}">
+                    Jane Doe
+                </button>
+
             </td>
             <td th:text="${message.createdDate}">2020-01-01</td>
             <td>
@@ -60,10 +63,10 @@
             </td>
         </tr>
         <tr id="replaceMe">
-            <td colspan="6">
-                <button class='btn' th:attr="hx-get=@{/web/nextpage(page=${nextpage})}"
+            <td id="last_item" colspan="6">
+                <button class='btn' th:attr="hx-get=@{/messages/nextpage(page=${nextpage})}"
                         hx-target="#replaceMe"
-                        hx-swap="outerHTML">
+                        hx-swap="outerHTML" th:text="#{loadmore}">
                     Load More...
                 </button>
             </td>

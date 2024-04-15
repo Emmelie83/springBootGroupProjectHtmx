@@ -10,6 +10,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import se.iths.springbootgroupproject.entities.Message;
 import se.iths.springbootgroupproject.dtos.PublicMessage;
+import se.iths.springbootgroupproject.entities.User;
 import se.iths.springbootgroupproject.repos.MessageRepository;
 
 import java.time.LocalDate;
@@ -75,9 +76,23 @@ public class MessageService {
         return messageRepository.findAllByUserId(userId);
     }
 
-    public List<Message> findPaginatedMessages(Pageable pageable) {
 
-        return messageRepository.findAllBy(pageable);
+    public List<Message> getPage(int p, int i) {
+//        return messageRepository.findAll(PageRequest.of(p,i)).toList();
+        return messageRepository.findMessagesBy(p,i);
+    }
+
+    public List<Message> getPaginatedUserMessages(int p, int i, Long user) {
+//
+        return messageRepository.findMessagesByUserId(p, i, user);
+    }
+
+    public long getUserMessagesCount(Long userId) {
+        return messageRepository.findAllByUserId(userId).size();
+    }
+
+    public long findAll() {
+        return messageRepository.findAll().size();
     }
 
 
