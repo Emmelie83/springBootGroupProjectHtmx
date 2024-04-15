@@ -9,8 +9,8 @@
 <body>
 <div class="menu">
     <a class="menu_link" th:href="@{'/swagger-ui/index.html'}">Endpoints</a>
-    <a class="menu_link" th:href="@{${httpServletRequest.requestURI} + '?page=' + ${page} + '&lang=en'}">English</a>
-    <a class="menu_link" th:href="@{${httpServletRequest.requestURI} + '?page=' + ${page} + '&lang=sv'}">Svenska</a>
+    <a class="menu_link" th:href="@{${httpServletRequest.requestURI} + '?lang=en'}">English</a>
+    <a class="menu_link" th:href="@{${httpServletRequest.requestURI} + '?lang=sv'}">Svenska</a>
     <a class="menu_link" id="logout_link" th:href="'/logout'" th:text="#{logout}"></a>
 </div>
 

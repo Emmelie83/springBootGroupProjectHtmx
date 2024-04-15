@@ -32,9 +32,9 @@ public class MessageController {
 
 
     @GetMapping("messages")
-    public String messages(Model model, @RequestParam(defaultValue = "5") int size, Principal principal, HttpServletRequest httpServletRequest, @AuthenticationPrincipal OAuth2User oauth2User) {
-
-        var paginatedMessages = messageService.getPage(1, size);
+    public String messages(Model model, @RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, Principal principal, HttpServletRequest httpServletRequest, @AuthenticationPrincipal OAuth2User oauth2User) {
+        if (page < 0) page = 0;
+        var paginatedMessages = messageService.getPage(0, size);
         long messagesCount = messageService.findAll();
 
         boolean isLoggedIn = principal != null;
@@ -47,6 +47,7 @@ public class MessageController {
             loggedInUser = userService.findByUserId(githubId);
         }
 
+        model.addAttribute("page", page);
         model.addAttribute("messagesCount", messagesCount);
         model.addAttribute("nextpage", paginatedMessages.getLast().getId());
         model.addAttribute("messages", paginatedMessages);
@@ -62,7 +63,7 @@ public class MessageController {
                               @AuthenticationPrincipal OAuth2User oauth2User) {
 
 
-        var paginatedMessages = messageService.getPage(1, size);
+        var paginatedMessages = messageService.getPage(0, size);
         long messagesCount = messageService.findAll();
 
         boolean isLoggedIn = principal != null;
