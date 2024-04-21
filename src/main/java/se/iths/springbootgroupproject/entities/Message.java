@@ -14,6 +14,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "message")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

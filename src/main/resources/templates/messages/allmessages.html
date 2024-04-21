@@ -1,0 +1,40 @@
+<tbody>
+<tr th:each="message : ${messages}">
+    <td th:text="${message.messageTitle}">Title</td>
+    <td th:text="${message.messageBody}" class="message_body">Lorum ipsum</td>
+    <td>
+        <button class="block" th:attr="hx-get=@{/messages/usermessages(userId=${message.user?.id})}"
+           hx-target="tbody"
+           hx-swap="outerHTML" th:text="${message.user.userName}">
+            Jane Doe
+        </button>
+
+    </td>
+    <td th:text="${message.createdDate}">2020-01-01</td>
+    <td>
+                <span th:if="${message.lastModifiedBy != null}"
+                      th:text="${message.lastModifiedDate} + ' ' + #{editedby} + ': ' + ${message.lastModifiedBy}"></span>
+        <p id="edit" th:if="${message.user?.id} == ${loggedInUser?.id}">
+            <a th:href="@{/web/update/{messageId}(messageId=${message.id})}" th:text="#{editmessage}"></a>
+        </p>
+    </td>
+    <td>
+        <a th:if="${message.messageLanguage != null and message.messageLanguage.equals('sv')}"
+           th:text="#{translatetoenglish}"
+           th:href="@{/web/translation/{messageId}(messageId=${message.id})}"></a>
+        <a th:if="${message.messageLanguage != null and message.messageLanguage.equals('en')}"
+           th:text="#{translatetoswedish}"
+           th:href="@{/web/translation/{messageId}(messageId=${message.id})}"></a>
+    </td>
+</tr>
+<tr id="replaceMe">
+    <td id="last_item" colspan="6">
+        <button th:if="${moreMessagesToLoad}" class='btn' th:attr="hx-get=@{/messages/nextpage(page=${nextpage})}"
+                hx-target="#replaceMe"
+                hx-swap="outerHTML" th:text="#{loadmore}">
+            Load More...
+        </button>
+        <p th:if="${!moreMessagesToLoad}" th:text="#{nomoremessages}">No more messages to load...</p>
+    </td>
+</tr>
+</tbody>

@@ -2,10 +2,6 @@ package se.iths.springbootgroupproject.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
@@ -20,7 +16,6 @@ import se.iths.springbootgroupproject.services.TranslationService;
 import se.iths.springbootgroupproject.services.UserService;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -39,15 +34,9 @@ public class WebController {
 
 
     @GetMapping("messages")
-    public String getMessages(@RequestParam(value = "page", defaultValue = "1") int page,
-                              Model model, Principal principal, HttpServletRequest httpServletRequest,
-                              @AuthenticationPrincipal OAuth2User oauth2User,
-                              @RequestParam(defaultValue = "3") int size) {
-
-        if (page < 1) page = 1;
-        Pageable pageable = PageRequest.of(page - 1, size);
-        List<Message> paginatedMessages = messageService.findPaginatedMessages(pageable);
-        int messageCount = paginatedMessages.size();
+    public String messages(Model model, Principal principal, HttpServletRequest httpServletRequest,
+                              @AuthenticationPrincipal OAuth2User oauth2User) {
+        var messages = messageService.getPage(0, 5);
         boolean isLoggedIn = principal != null;
 
         Integer githubId;
@@ -58,14 +47,36 @@ public class WebController {
             loggedInUser = userService.findByUserId(githubId);
         }
 
-        model.addAttribute("messages", paginatedMessages);
+        model.addAttribute("nextpage", messages.getLast().getId());
+        model.addAttribute("messages", messages);
         model.addAttribute("isLoggedIn", isLoggedIn);
         model.addAttribute("httpServletRequest", httpServletRequest);
-        model.addAttribute("page", page);
-        model.addAttribute("messageCount", messageCount);
         loggedInUser.ifPresent(user -> model.addAttribute("loggedInUser", user));
 
         return "messages";
+    }
+
+
+    @GetMapping("nextpage")
+    public String loadMore(Model model, @RequestParam(defaultValue = "1") String page, Principal principal,
+                           @AuthenticationPrincipal OAuth2User oauth2User,
+                           @RequestParam(defaultValue = "5") int size) {
+        int p = Integer.parseInt(page);
+        var messages = messageService.getPage(p, size);
+        boolean isLoggedIn = principal != null;
+
+        Integer githubId;
+        Optional<User> loggedInUser = Optional.empty();
+
+        if (oauth2User != null) {
+            githubId = oauth2User.getAttribute("id");
+            loggedInUser = userService.findByUserId(githubId);
+        }
+        model.addAttribute("messages", messages);
+        model.addAttribute("isLoggedIn", isLoggedIn);
+        model.addAttribute("nextpage", messages.getLast().getId());
+        loggedInUser.ifPresent(user -> model.addAttribute("loggedInUser", user));
+        return "nextpage.html";
     }
 
     @GetMapping("translation/{messageId}")
@@ -125,14 +136,14 @@ public class WebController {
 
     private String redirectIfNotOwnerOrAdmin(OAuth2User oauth2User, Message message) {
         if (oauth2User == null) {
-            return "redirect:/web/messages";
+            return "redirect:/web/messages.html";
         }
 
         Integer githubId = oauth2User.getAttribute("id");
         Optional<User> loggedInUser = userService.findByUserId(githubId);
 
         if (!Objects.equals(message.getUser().getGitId(), githubId) && (loggedInUser.isEmpty() || !loggedInUser.get().getRole().equals("ROLE_ADMIN"))) {
-            return "redirect:/web/messages";
+            return "redirect:/web/messages.html";
         }
         return null;
     }

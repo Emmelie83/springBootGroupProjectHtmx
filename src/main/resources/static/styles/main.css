@@ -16,8 +16,7 @@ body {
 
 table, th, td {
     table-layout: fixed;
-    border: 1px solid #ccc;
-    border-collapse: collapse;
+    border: none;
     vertical-align: top;
 }
 
@@ -41,6 +40,11 @@ th {
     background-color: #04AA6D;
 
 }
+
+table tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
 
 
 .post {
@@ -101,11 +105,28 @@ input[type=text], #messageBody {
 
 #pagination_buttons {
     margin-top: 1.5em;
+
 }
 
 #prev_button {
     margin-left: 0;
 }
+
+#replaceMe {
+    background-color: transparent;
+    padding: 0;
+}
+
+.block {
+    display: block;
+    width: 100%;
+}
+
+#last_item {
+    padding-left: 0;
+    padding-top: 2em;
+}
+
 
 
 
