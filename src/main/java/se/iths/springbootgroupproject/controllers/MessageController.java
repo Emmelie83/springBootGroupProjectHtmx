@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import se.iths.springbootgroupproject.entities.Message;
 import se.iths.springbootgroupproject.entities.User;
 import se.iths.springbootgroupproject.services.MessageService;
 import se.iths.springbootgroupproject.services.TranslationService;
@@ -32,10 +31,9 @@ public class MessageController {
 
 
     @GetMapping("messages")
-    public String messages(Model model, @RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, Principal principal, HttpServletRequest httpServletRequest, @AuthenticationPrincipal OAuth2User oauth2User) {
-        if (page < 0) page = 0;
+    public String messages(Model model, @RequestParam(defaultValue = "5") int size, Principal principal, HttpServletRequest httpServletRequest, @AuthenticationPrincipal OAuth2User oauth2User) {
         var paginatedMessages = messageService.getPage(0, size);
-        long messagesCount = messageService.findAll();
+        long messagesCount = messageService.messageCount();
 
         boolean isLoggedIn = principal != null;
 
@@ -47,9 +45,14 @@ public class MessageController {
             loggedInUser = userService.findByUserId(githubId);
         }
 
-        model.addAttribute("page", page);
-        model.addAttribute("messagesCount", messagesCount);
-        model.addAttribute("nextpage", paginatedMessages.getLast().getId());
+        var nextpage = paginatedMessages.getLast().getId();
+
+        boolean moreMessagesToLoad = false;
+
+        if (messagesCount > nextpage) moreMessagesToLoad = true;
+
+        model.addAttribute("moreMessagesToLoad", moreMessagesToLoad);
+        model.addAttribute("nextpage", nextpage);
         model.addAttribute("messages", paginatedMessages);
         model.addAttribute("isLoggedIn", isLoggedIn);
         model.addAttribute("httpServletRequest", httpServletRequest);
@@ -64,7 +67,7 @@ public class MessageController {
 
 
         var paginatedMessages = messageService.getPage(0, size);
-        long messagesCount = messageService.findAll();
+        long messagesCount = messageService.messageCount();
 
         boolean isLoggedIn = principal != null;
 
@@ -76,8 +79,14 @@ public class MessageController {
             loggedInUser = userService.findByUserId(githubId);
         }
 
-        model.addAttribute("messagesCount", messagesCount);
-        model.addAttribute("nextpage", paginatedMessages.getLast().getId());
+        var nextpage = paginatedMessages.getLast().getId();
+
+        boolean moreMessagesToLoad = false;
+
+        if (messagesCount > nextpage) moreMessagesToLoad = true;
+
+        model.addAttribute("moreMessagesToLoad", moreMessagesToLoad);
+        model.addAttribute("nextpage", nextpage);
         model.addAttribute("messages", paginatedMessages);
         model.addAttribute("isLoggedIn", isLoggedIn);
         loggedInUser.ifPresent(user -> model.addAttribute("loggedInUser", user));
@@ -90,9 +99,9 @@ public class MessageController {
     public String loadMore(Model model, @RequestParam(defaultValue = "1") String page, Principal principal,
                            @AuthenticationPrincipal OAuth2User oauth2User, @RequestParam(defaultValue = "5") int size) {
         int p = Integer.parseInt(page);
-        var messages = messageService.getPage(p, size);
+        var paginatedMessages = messageService.getPage(p, size);
         boolean isLoggedIn = principal != null;
-        long messagesCount = messageService.findAll();
+        long messagesCount = messageService.messageCount();
 
         Integer githubId;
         Optional<User> loggedInUser = Optional.empty();
@@ -102,11 +111,18 @@ public class MessageController {
             loggedInUser = userService.findByUserId(githubId);
         }
 
+        var nextpage = paginatedMessages.getLast().getId();
+
+        boolean moreMessagesToLoad = false;
+
+        if (messagesCount > nextpage) moreMessagesToLoad = true;
+
+        model.addAttribute("moreMessagesToLoad", moreMessagesToLoad);
+        model.addAttribute("nextpage", nextpage);
+
         model.addAttribute("page", p);
-        model.addAttribute("messagesCount", messagesCount);
-        model.addAttribute("messages", messages);
+        model.addAttribute("messages", paginatedMessages);
         model.addAttribute("isLoggedIn", isLoggedIn);
-        model.addAttribute("nextpage", messages.getLast().getId());
         loggedInUser.ifPresent(user -> model.addAttribute("loggedInUser", user));
         return "messages/nextpage";
     }
@@ -114,14 +130,21 @@ public class MessageController {
     @GetMapping("usermessages")
     public String getUserMessages(@RequestParam Long userId, Model model, @RequestParam(defaultValue = "1") String page, @RequestParam(defaultValue = "5") int size) {
         int p = Integer.parseInt(page);
-        var paginatedUserMessages = messageService.getPaginatedUserMessages(p, size, userId);
-        long messagesCount = messageService.getUserMessagesCount(userId);
 
-        model.addAttribute("page", p);
-        model.addAttribute("messagesCount", messagesCount);
+        var paginatedUserMessages = messageService.getPaginatedUserMessages(p, size, userId);
+        int messagesCount = messageService.getUserMessagesCount(userId);
+
+
+        int nextpage = p + 5;
+
+        boolean moreMessagesToLoad = false;
+
+        if (messagesCount > nextpage) moreMessagesToLoad = true;
+
+        model.addAttribute("moreMessagesToLoad", moreMessagesToLoad);
+        model.addAttribute("nextpage", nextpage);
         model.addAttribute("userId", userId);
         model.addAttribute("userMessages", paginatedUserMessages);
-        model.addAttribute("nextpage", paginatedUserMessages.getLast().getId());
 
         return "messages/usermessages";
     }
@@ -134,10 +157,9 @@ public class MessageController {
                                        @AuthenticationPrincipal OAuth2User oauth2User,
                                        @RequestParam(defaultValue = "5") int size) {
 
-
         int p = Integer.parseInt(page);
         var paginatedUserMessages = messageService.getPaginatedUserMessages(p, size, userId);
-        long messagesCount = messageService.getUserMessagesCount(userId);
+        int messagesCount = messageService.getUserMessagesCount(userId);
 
 
         Integer githubId;
@@ -148,11 +170,18 @@ public class MessageController {
             loggedInUser = userService.findByUserId(githubId);
         }
 
+        int nextpage = p + 5;
+
+        boolean moreMessagesToLoad = false;
+
+        if (messagesCount > nextpage) moreMessagesToLoad = true;
+
+        model.addAttribute("moreMessagesToLoad", moreMessagesToLoad);
+        model.addAttribute("nextpage", nextpage);
+
         model.addAttribute("page", p);
-        model.addAttribute("messagesCount", messagesCount);
         model.addAttribute("userId", userId);
         model.addAttribute("userMessages", paginatedUserMessages);
-        model.addAttribute("nextpage", paginatedUserMessages.getLast().getId());
         loggedInUser.ifPresent(user -> model.addAttribute("loggedInUser", user));
         return "messages/usernextpage";
     }

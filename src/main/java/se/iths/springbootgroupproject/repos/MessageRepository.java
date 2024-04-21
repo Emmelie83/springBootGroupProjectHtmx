@@ -32,8 +32,5 @@ public interface MessageRepository extends PagingAndSortingRepository<Message, L
     List<Message> findMessagesByUserId(@Param("id") long id, @Param("pageSize") int pageSize, @Param("userId") long userId);
 
 
-
-
-
-
+    int countByUserId(Long userId);
 }

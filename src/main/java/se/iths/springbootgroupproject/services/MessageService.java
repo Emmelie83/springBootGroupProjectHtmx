@@ -3,14 +3,9 @@ package se.iths.springbootgroupproject.services;
 import jakarta.persistence.EntityNotFoundException;
 
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import se.iths.springbootgroupproject.entities.Message;
 import se.iths.springbootgroupproject.dtos.PublicMessage;
-import se.iths.springbootgroupproject.entities.User;
 import se.iths.springbootgroupproject.repos.MessageRepository;
 
 import java.time.LocalDate;
@@ -87,12 +82,12 @@ public class MessageService {
         return messageRepository.findMessagesByUserId(p, i, user);
     }
 
-    public long getUserMessagesCount(Long userId) {
-        return messageRepository.findAllByUserId(userId).size();
+    public int getUserMessagesCount(Long userId) {
+        return messageRepository.countByUserId(userId);
     }
 
-    public long findAll() {
-        return messageRepository.findAll().size();
+    public long messageCount() {
+        return messageRepository.count();
     }
 
 
