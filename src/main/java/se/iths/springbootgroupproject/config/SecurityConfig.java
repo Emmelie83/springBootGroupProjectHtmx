@@ -23,7 +23,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2Login ->
-                        oauth2Login.defaultSuccessUrl("/web/messages", true)
+                        oauth2Login.defaultSuccessUrl("/messages/messages", true)
                 )
                 .logout(logout ->
                         logout.logoutSuccessUrl("/web/home")
